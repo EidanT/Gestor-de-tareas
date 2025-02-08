@@ -1,27 +1,33 @@
+using Gestor_de_tareas.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Agregar conexión a la base de datos
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql("server=localhost;database=gestortareas;user=root;password=@Xxnimasterxx123",
+        new MySqlServerVersion(new Version(8, 0, 25))));
+
+// Agregar servicios MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
+// Configurar rutas
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Tasks}/{action=Index}/{id?}");
 
 app.Run();
